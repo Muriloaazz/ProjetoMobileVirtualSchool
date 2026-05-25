@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "MyProjectTeachLearn",
-    "slug": "MyProjectTeachLearn",
+    "name": "Virtual School",
+    "slug": "virtual-school",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
