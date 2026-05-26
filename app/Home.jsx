@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   Alert,
-  Image,
   Modal,
   SafeAreaView,
   ScrollView,
@@ -11,44 +10,22 @@ import {
   View,
 } from 'react-native';
 import styles from './HomeStyles';
+import AvisosReservados from './AvisosReservados';
 
 // ─── Dados de exemplo ────────────────────────────────────────────────────────
 
 const usuario = {
   nome: 'Carlos Mendes',
   avatar: null, // coloque uma URL ou require() local se quiser foto
-  cargo: 'Membro Premium',
 };
 
 // ─── Componente: Cabeçalho / Boas-vindas ─────────────────────────────────────
 
 const Cabecalho = ({ usuario }) => {
-  const inicial = usuario.nome.charAt(0).toUpperCase();
-
   return (
     <View style={styles.cabecalho}>
-      <View style={styles.cabecalhoConteudo}>
-        <View style={styles.avatarContainer}>
-          {usuario.avatar ? (
-            <Image source={{ uri: usuario.avatar }} style={styles.avatarImagem} />
-          ) : (
-            <View style={styles.avatarLetra}>
-              <Text style={styles.avatarTexto}>{inicial}</Text>
-            </View>
-          )}
-          <View style={styles.avatarOnline} />
-        </View>
-
-        <View style={styles.cabecalhoTexto}>
-          <Text style={styles.saudacao}>Bem-vindo de volta 👋</Text>
-          <Text style={styles.nomeUsuario}>{usuario.nome}</Text>
-          <View style={styles.badgeCargo}>
-            <Text style={styles.badgeCargoTexto}>{usuario.cargo}</Text>
-          </View>
-        </View>
-      </View>
-
-      <View style={styles.cabecalhoDecoracao} />
+      <Text style={styles.saudacao}>Bem vindo ao nosso Aplicativo</Text>
+      <Text style={styles.nomeUsuario}>{usuario.nome}</Text>
     </View>
   );
 };
@@ -63,7 +40,6 @@ const Rodape = ({ onSair }) => (
     <View style={styles.rodapeConteudo}>
       <View>
         <Text style={styles.rodapeAppNome}>MeuApp</Text>
-        <Text style={styles.rodapeVersao}>Versão 1.0.0</Text>
       </View>
 
       <TouchableOpacity style={styles.botaoSair} onPress={onSair} activeOpacity={0.8}>
@@ -97,6 +73,11 @@ export default function Home() {
       >
         {/* Cabeçalho com boas-vindas */}
         <Cabecalho usuario={usuario} />
+
+        {/* Área reservada para avisos (placeholder) */}
+        <View style={styles.centerWrapper}>
+          <AvisosReservados />
+        </View>
 
         {/* Rodapé com botão de sair */}
         <Rodape onSair={() => setModalSairVisivel(true)} />
