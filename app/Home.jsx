@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import styles from './HomeStyles';
 import AvisosReservados from './AvisosReservados';
+import styles from './HomeStyles';
 
 // ─── Dados de exemplo ────────────────────────────────────────────────────────
 
@@ -92,7 +92,6 @@ export default function Home() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalSairContainer}>
-            <Text style={styles.modalSairIcone}>👋</Text>
             <Text style={styles.modalSairTitulo}>Sair da conta?</Text>
             <Text style={styles.modalSairMensagem}>
               Tem certeza que deseja sair da conta de{' '}

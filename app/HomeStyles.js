@@ -14,7 +14,7 @@
  *   Texto secundário : #7A809E
  */
 
-import { StyleSheet, Dimensions } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
