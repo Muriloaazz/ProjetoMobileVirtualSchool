@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.xl,
   },
   logoPlaceholder: {
-    width: 120,
-    height: 120,
+    width: 350,
+    height: 350,
     marginBottom: SPACING.lg,
     // Shadow
     ...Platform.select({

@@ -13,19 +13,11 @@ import styles from './MenuStyles';
 // ─── Componente principal ────────────────────────────────────────────────────
 const Menu = ({ navigation }) => {
   const [abaSelecionada, setAbaSelecionada] = useState('menu');
-  const [perfilExpandido, setPerfilExpandido] = useState(false);
   const [user] = useState({
-    name: '',
     email: '',
-    initials: 'U',
-    membro: '',
   });
 
   // ── Handlers ────────────────────────────────────────────────────────────
-  const handleEditar = () => {
-    Alert.alert('Editar perfil', 'Você será redirecionado para a edição do perfil.');
-  };
-
   const handleSair = () => {
     Alert.alert(
       'Sair da conta',
@@ -39,6 +31,7 @@ const Menu = ({ navigation }) => {
           text: 'Sair',
           style: 'destructive',
           onPress: () => {
+            // TODO: Implementar logout via API em breve
             if (navigation) {
               navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
             } else {
@@ -64,45 +57,8 @@ const Menu = ({ navigation }) => {
           <Text style={styles.screenTitle}>Menu</Text>
         </View>
 
-        {/* ══ PERFIL ══════════════════════════════════════════════ */}
-        <Text style={styles.secaoTitulo}>Perfil</Text>
-
-        <View style={styles.perfilCard}>
-          <View style={styles.perfilLeft}>
-            <TouchableOpacity
-              style={styles.avatarButton}
-              activeOpacity={0.85}
-              onPress={() => setPerfilExpandido(!perfilExpandido)}
-              accessibilityLabel={perfilExpandido ? 'Fechar perfil' : 'Abrir perfil'}
-            >
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{user.initials}</Text>
-              </View>
-            </TouchableOpacity>
-            <View style={styles.perfilInfo}>
-              <Text style={styles.perfilNome}>{user.name || 'Usuário'}</Text>
-              <Text style={styles.perfilEmail}>{user.email || 'Email não informado'}</Text>
-              {user.membro ? <Text style={styles.perfilMembro}>{user.membro}</Text> : null}
-            </View>
-          </View>
-        </View>
-
-        {perfilExpandido && (
-          <View style={styles.perfilDetalhe}>
-            <Text style={styles.perfilDetalheValor}>{user.name || 'Usuário'}</Text>
-            <Text style={styles.perfilEmail}>{user.email || 'E-mail não informado'}</Text>
-            {user.membro ? <Text style={styles.perfilMembro}>{user.membro}</Text> : null}
-            <TouchableOpacity
-              style={styles.editarPerfilButton}
-              onPress={handleEditar}
-            >
-              <Text style={styles.editarPerfilText}>Editar perfil</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-
         {/* ══ SAIR DA CONTA ═══════════════════════════════════════ */}
-        <Text style={[styles.secaoTitulo, styles.secaoTituloSpacing]}>
+        <Text style={styles.secaoTitulo}>
           Conta
         </Text>
 

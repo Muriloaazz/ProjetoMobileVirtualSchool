@@ -1,432 +1,442 @@
-import { Dimensions, Platform, StyleSheet } from 'react-native';
+/**
+ * HomeStyles.css → HomeStyles.js
+ *
+ * ATENÇÃO: React Native não usa CSS puro.
+ * Este arquivo usa StyleSheet.create() do React Native.
+ * Renomeie para HomeStyles.js e importe normalmente:
+ *   import styles from './HomeStyles';
+ *
+ * Paleta:
+ *   Fundo principal  : #F4F6FB
+ *   Header gradiente : #1A1F36 → #2D3561
+ *   Destaque         : #5B6CF9
+ *   Texto principal  : #1A1F36
+ *   Texto secundário : #7A809E
+ */
+
+import { StyleSheet, Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
-// ─── Tokens ─────────────────────────────────────────────────────────────────
 const COLORS = {
-  background:      '#F7F8FA',
-  surface:         '#FFFFFF',
-  surfaceAlt:      '#F0F2F5',
-  primary:         '#1A1A2E',
-  accent:          '#4361EE',
-  accentLight:     '#EEF1FD',
-  accentDark:      '#3451D1',
-  textPrimary:     '#1A1A2E',
-  textSecondary:   '#6B7280',
-  textMuted:       '#9CA3AF',
-  border:          '#E5E7EB',
-  borderLight:     '#F3F4F6',
-  naoLidoBg:       '#F5F7FF',
-  naoLidoBorder:   '#C7D2FE',
-  indicador:       '#4361EE',
-  badge:           '#EF4444',
-  badgeText:       '#FFFFFF',
-  tagBg:           '#DBEAFE',
-  tagText:         '#1D4ED8',
-  white:           '#FFFFFF',
-  tabBar:          '#FFFFFF',
-  tabActive:       '#4361EE',
-  tabInactive:     '#9CA3AF',
-  tabActiveBg:     '#EEF1FD',
+  bgPrimary:    '#F4F6FB',
+  headerStart:  '#1A1F36',
+  headerEnd:    '#2D3561',
+  accent:       '#5B6CF9',
+  accentLight:  '#EEF0FE',
+  textDark:     '#1A1F36',
+  textMid:      '#4A5078',
+  textLight:    '#7A809E',
+  white:        '#FFFFFF',
+  cardBg:       '#FFFFFF',
+  border:       '#E8EAF2',
+  danger:       '#EF4444',
+  dangerLight:  '#FEF2F2',
+  online:       '#22C55E',
 };
 
-const SPACING = {
-  xs:  4,
-  sm:  8,
-  md:  16,
-  lg:  24,
-  xl:  32,
-  xxl: 48,
-};
-
-const RADIUS = {
-  sm:   6,
-  md:   12,
-  lg:   16,
-  xl:   20,
-  full: 999,
-};
-
-const shadow = (color = '#000', opacity = 0.06, radius = 8, elevation = 3) =>
-  Platform.select({
-    ios: {
-      shadowColor: color,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: opacity,
-      shadowRadius: radius,
-    },
-    android: { elevation },
-  });
-
-// ─── Estilos ─────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
 
-  /* ── Layout base ─────────────────────────────────────────────── */
-  safeArea: {
+  // ── Tela ──────────────────────────────────────────────────────────────────
+
+  container: {
     flex: 1,
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.bgPrimary,
   },
   scroll: {
     flex: 1,
   },
-  scrollContent: {
-    paddingHorizontal: SPACING.md,
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.xxl,
-  },
-  bottomSpacer: {
-    height: SPACING.xl,
+  scrollConteudo: {
+    paddingBottom: 32,
   },
 
-  /* ── Cabeçalho de seção ──────────────────────────────────────── */
-  secaoHeader: {
+  // ── Cabeçalho ─────────────────────────────────────────────────────────────
+
+  cabecalho: {
+    backgroundColor: COLORS.headerStart,
+    paddingTop: 24,
+    paddingBottom: 40,
+    paddingHorizontal: 24,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  cabecalhoConteudo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: SPACING.lg,
-    marginBottom: SPACING.sm,
-  },
-  secaoTituloRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: SPACING.sm,
-  },
-  secaoTitulo: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    letterSpacing: -0.3,
+    gap: 16,
   },
 
-  /* ── PERFIL ──────────────────────────────────────────────────── */
-  perfilCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    ...shadow('#000', 0.06, 10, 3),
+  /* Avatar */
+  avatarContainer: {
+    position: 'relative',
   },
-  perfilLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+  avatarImagem: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    borderWidth: 3,
+    borderColor: COLORS.accent,
   },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: RADIUS.full,
+  avatarLetra: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     backgroundColor: COLORS.accent,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: SPACING.md,
-    ...shadow(COLORS.accent, 0.25, 8, 4),
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.25)',
   },
-  avatarText: {
-    fontSize: 16,
+  avatarTexto: {
+    fontSize: 26,
     fontWeight: '700',
     color: COLORS.white,
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
-  perfilInfo: {
+  avatarOnline: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: COLORS.online,
+    borderWidth: 2,
+    borderColor: COLORS.headerStart,
+  },
+
+  /* Texto do cabeçalho */
+  cabecalhoTexto: {
     flex: 1,
   },
-  avatarButton: {
-    marginRight: SPACING.sm,
-    borderRadius: RADIUS.full,
-  },
-  perfilNome: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    marginBottom: 2,
-  },
-  perfilEmail: {
+  saudacao: {
     fontSize: 13,
-    fontWeight: '400',
-    color: COLORS.textSecondary,
-  },
-
-  /* Perfil expandido */
-  perfilDetalhe: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.md,
-    marginTop: SPACING.xs,
-    ...shadow('#000', 0.04, 8, 2),
-  },
-  perfilDetalheRow: {
-    paddingVertical: SPACING.sm,
-  },
-  perfilDetalheLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: COLORS.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 2,
-  },
-  perfilDetalheValor: {
-    fontSize: 14,
+    color: 'rgba(255,255,255,0.65)',
     fontWeight: '500',
-    color: COLORS.textPrimary,
-  },
-  separatorThin: {
-    height: 1,
-    backgroundColor: COLORS.borderLight,
-  },
-  editarPerfilButton: {
-    marginTop: SPACING.md,
-    borderWidth: 1.5,
-    borderColor: COLORS.accent,
-    borderRadius: RADIUS.md,
-    paddingVertical: SPACING.sm,
-    alignItems: 'center',
-  },
-  editarPerfilText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: COLORS.accent,
-  },
-
-  /* ── BARRA DE PESQUISA ───────────────────────────────────────── */
-  searchWrapper: {
-    marginBottom: SPACING.xs,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
-    paddingHorizontal: SPACING.md,
-    height: 50,
-    borderWidth: 1.5,
-    borderColor: COLORS.border,
-    ...shadow('#000', 0.04, 6, 2),
-  },
-  searchIcon: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.accent,
-    marginRight: SPACING.sm,
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: COLORS.textPrimary,
-    paddingVertical: 0,
-  },
-  clearButton: {
-    paddingLeft: SPACING.sm,
-    paddingVertical: SPACING.xs,
-  },
-  clearText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.textMuted,
-  },
-
-  /* Resultados */
-  resultadosBox: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    marginBottom: SPACING.xs,
-    overflow: 'hidden',
-    ...shadow('#000', 0.04, 6, 2),
-  },
-  resultadoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.borderLight,
-  },
-  resultadoLeft: {
-    flex: 1,
-  },
-  resultadoCategoria: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: COLORS.accent,
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
     marginBottom: 2,
+    letterSpacing: 0.3,
   },
-  resultadoTitulo: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: COLORS.textPrimary,
-  },
-  resultadoSeta: {
+  nomeUsuario: {
     fontSize: 22,
-    color: COLORS.textMuted,
-    marginLeft: SPACING.sm,
+    fontWeight: '800',
+    color: COLORS.white,
+    letterSpacing: 0.2,
+    marginBottom: 6,
   },
-  semResultado: {
-    padding: SPACING.lg,
-    alignItems: 'center',
+  badgeCargo: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(91,108,249,0.35)',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(91,108,249,0.5)',
   },
-  semResultadoTexto: {
-    fontSize: 14,
-    color: COLORS.textSecondary,
+  badgeCargoTexto: {
+    fontSize: 11,
+    color: '#C5CAFF',
+    fontWeight: '600',
+    letterSpacing: 0.4,
   },
 
-  /* ── AVISOS ──────────────────────────────────────────────────── */
-  badge: {
-    backgroundColor: COLORS.badge,
-    borderRadius: RADIUS.full,
-    minWidth: 20,
-    height: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: SPACING.xs,
+  /* Elemento decorativo de fundo */
+  cabecalhoDecoracao: {
+    position: 'absolute',
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: 'rgba(91,108,249,0.12)',
+    right: -40,
+    top: -60,
   },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: COLORS.badgeText,
+
+  // ── Seção de Anúncios ─────────────────────────────────────────────────────
+
+  secao: {
+    paddingHorizontal: 20,
+    marginTop: 28,
   },
-  marcarTodosText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: COLORS.accent,
-  },
-  avisosContainer: {
-    backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
-    overflow: 'hidden',
-    ...shadow('#000', 0.05, 10, 3),
-  },
-  avisoCard: {
+  secaoTituloCont: {
     flexDirection: 'row',
-    paddingVertical: SPACING.md,
-    paddingHorizontal: SPACING.md,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.borderLight,
-    backgroundColor: COLORS.surface,
-  },
-  avisoCardNaoLido: {
-    backgroundColor: COLORS.naoLidoBg,
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.indicador,
-  },
-  avisoCardUltimo: {
-    borderBottomWidth: 0,
-  },
-  avisoLeft: {
-    width: 6,
     alignItems: 'center',
-    paddingTop: 6,
-    marginRight: SPACING.sm,
-  },
-  avisoIndicador: {
-    width: 6,
-    height: 6,
-    borderRadius: RADIUS.full,
-    backgroundColor: COLORS.indicador,
-  },
-  avisoConteudo: {
-    flex: 1,
-  },
-  avisoTopo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    gap: 10,
     marginBottom: 4,
   },
-  avisoTitulo: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: COLORS.textSecondary,
-    flex: 1,
-    marginRight: SPACING.sm,
+  secaoTitulo: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: COLORS.textDark,
+    letterSpacing: 0.1,
   },
-  avisoTituloNaoLido: {
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-  },
-  avisoData: {
-    fontSize: 11,
-    color: COLORS.textMuted,
-    fontWeight: '400',
-    flexShrink: 0,
-  },
-  avisoDescricao: {
+  secaoSubtitulo: {
     fontSize: 13,
-    color: COLORS.textSecondary,
-    lineHeight: 19,
-  },
-  avisoNaoLidoTag: {
-    marginTop: SPACING.xs,
-    alignSelf: 'flex-start',
-    backgroundColor: COLORS.tagBg,
-    color: COLORS.tagText,
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 2,
-    borderRadius: RADIUS.full,
-    overflow: 'hidden',
+    color: COLORS.textLight,
+    marginBottom: 16,
   },
 
-  /* ── RODAPÉ / TAB BAR ─────────────────────────────────────────── */
-  tabBar: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.tabBar,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingBottom: Platform.OS === 'ios' ? 24 : SPACING.sm,
-    paddingTop: SPACING.sm,
-    paddingHorizontal: SPACING.xl,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 10,
-      },
-      android: { elevation: 10 },
-    }),
-  },
-  tabItem: {
-    flex: 1,
+  /* Badge de contagem de não lidos */
+  badgeContagem: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 12,
+    minWidth: 22,
+    height: 22,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 6,
   },
-  tabIconBox: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderRadius: RADIUS.full,
-    marginBottom: 3,
-  },
-  tabIconBoxActive: {
-    backgroundColor: COLORS.tabActiveBg,
-  },
-  tabIconText: {
+  badgeContagemTexto: {
     fontSize: 11,
     fontWeight: '700',
-    color: COLORS.tabInactive,
-    textTransform: 'uppercase',
+    color: COLORS.white,
+  },
+
+  // ── Card de Anúncio ───────────────────────────────────────────────────────
+
+  card: {
+    backgroundColor: COLORS.cardBg,
+    borderRadius: 20,
+    padding: 18,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    shadowColor: '#1A1F36',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  cardNaoLido: {
+    borderColor: '#C7CBFF',
+    borderLeftWidth: 4,
+    borderLeftColor: COLORS.accent,
+  },
+  cardIndicadorNaoLido: {
+    position: 'absolute',
+    top: 18,
+    right: 18,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.accent,
+  },
+  cardTopo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  cardCategoria: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  cardCategoriaDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  cardCategoriaTexto: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  cardData: {
+    fontSize: 11,
+    color: COLORS.textLight,
+    fontWeight: '500',
+  },
+  cardTitulo: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.textDark,
+    marginBottom: 6,
+    lineHeight: 22,
+  },
+  cardDescricao: {
+    fontSize: 13,
+    color: COLORS.textMid,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  cardBotaoLerMais: {
+    alignSelf: 'flex-start',
+  },
+  cardBotaoLerMaisTexto: {
+    fontSize: 13,
+    color: COLORS.accent,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+
+  // ── Modal de Detalhe do Anúncio ───────────────────────────────────────────
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(26,31,54,0.55)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 28,
+    paddingBottom: 36,
+  },
+  modalCategoria: {
+    alignSelf: 'flex-start',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginBottom: 14,
+  },
+  modalTitulo: {
+    fontSize: 19,
+    fontWeight: '800',
+    color: COLORS.textDark,
+    marginBottom: 6,
+    lineHeight: 26,
+  },
+  modalData: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    fontWeight: '500',
+    marginBottom: 14,
+  },
+  modalDescricao: {
+    fontSize: 14,
+    color: COLORS.textMid,
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  modalBotaoFechar: {
+    backgroundColor: COLORS.accentLight,
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  modalBotaoFecharTexto: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.accent,
+  },
+
+  // ── Rodapé ────────────────────────────────────────────────────────────────
+
+  rodape: {
+    marginTop: 32,
+    paddingHorizontal: 20,
+  },
+  rodapeLinha: {
+    height: 1,
+    backgroundColor: COLORS.border,
+    marginBottom: 20,
+  },
+  rodapeConteudo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rodapeAppNome: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: COLORS.textDark,
     letterSpacing: 0.5,
   },
-  tabIconTextActive: {
-    color: COLORS.tabActive,
-  },
-  tabLabel: {
+  rodapeVersao: {
     fontSize: 11,
-    fontWeight: '500',
-    color: COLORS.tabInactive,
+    color: COLORS.textLight,
+    marginTop: 2,
   },
-  tabLabelActive: {
+
+  /* Botão de sair */
+  botaoSair: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: COLORS.dangerLight,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#FECACA',
+  },
+  botaoSairIcone: {
+    fontSize: 16,
+    color: COLORS.danger,
+  },
+  botaoSairTexto: {
+    fontSize: 14,
     fontWeight: '700',
-    color: COLORS.tabActive,
+    color: COLORS.danger,
+    letterSpacing: 0.3,
+  },
+
+  // ── Modal de Saída ────────────────────────────────────────────────────────
+
+  modalSairContainer: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    padding: 32,
+    paddingBottom: 40,
+    alignItems: 'center',
+  },
+  modalSairIcone: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  modalSairTitulo: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: COLORS.textDark,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  modalSairMensagem: {
+    fontSize: 14,
+    color: COLORS.textMid,
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 28,
+  },
+  modalSairNome: {
+    fontWeight: '700',
+    color: COLORS.textDark,
+  },
+  modalSairBotoes: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  modalSairBotao: {
+    flex: 1,
+    borderRadius: 16,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+  modalSairBotaoCancelar: {
+    backgroundColor: COLORS.accentLight,
+    borderWidth: 1,
+    borderColor: '#C7CBFF',
+  },
+  modalSairBotaoCancelarTexto: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.accent,
+  },
+  modalSairBotaoConfirmar: {
+    backgroundColor: COLORS.danger,
+  },
+  modalSairBotaoConfirmarTexto: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: COLORS.white,
   },
 });
 
