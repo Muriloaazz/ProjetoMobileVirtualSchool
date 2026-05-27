@@ -20,17 +20,17 @@ const { width } = Dimensions.get('window');
 
 const COLORS = {
   bgPrimary:    '#F4F6FB',
-  headerStart:  '#1A1F36',
-  headerEnd:    '#2D3561',
-  accent:       '#5B6CF9',
+  headerStart:  '#2b6cb2',
+  headerEnd:    '#2b6cb2',
+  accent:       '#2b6cb2',
   accentLight:  '#EEF0FE',
-  textDark:     '#1A1F36',
-  textMid:      '#4A5078',
-  textLight:    '#7A809E',
+  textDark:     '#2b6cb2',
+  textMid:      '#2b6cb2',
+  textLight:    '##2b6cb2',
   white:        '#FFFFFF',
   cardBg:       '#FFFFFF',
   border:       '#E8EAF2',
-  danger:       '#EF4444',
+  danger:       '#ff0000',
   dangerLight:  '#FEF2F2',
   online:       '#22C55E',
 };
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#FECACA',
+    borderColor: '#ff0000',
   },
   botaoSairIcone: {
     fontSize: 16,

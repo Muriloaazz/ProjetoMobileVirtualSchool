@@ -4,18 +4,18 @@ const COLORS = {
   background:    '#F7F8FA',
   surface:       '#FFFFFF',
   primary:       '#1A1A2E',
-  accent:        '#4361EE',
-  accentHover:   '#3451D1',
+  accent:        '#2b6cb2',
+  accentHover:   '#2b6cb2',
   textPrimary:   '#1A1A2E',
   textSecondary: '#6B7280',
   placeholder:   '#AAAAAA',
   border:        '#E5E7EB',
-  borderFocus:   '#4361EE',
-  error:         '#EF4444',
+  borderFocus:   '#2b6cb2',
+  error:         '#ff0000',
   errorBg:       '#FEF2F2',
   divider:       '#D1D5DB',
   white:         '#FFFFFF',
-  disabled:      '#93A3F8',
+  disabled:      '#2b6cb2',
 };
 
 const SPACING = {
