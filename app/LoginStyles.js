@@ -64,11 +64,12 @@ const styles = StyleSheet.create({
   headerSection: {
     alignItems: 'center',
     marginBottom: SPACING.xl,
+    paddingTop: SPACING.lg,
   },
   logoPlaceholder: {
-    width: 350,
-    height: 350,
-    marginBottom: SPACING.lg,
+    width: 500,
+    height: 230,
+    marginBottom: -SPACING.xs,
     // Shadow
     ...Platform.select({
       ios: {
