@@ -51,36 +51,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  centerWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-
-  avisosReservadoBox: {
+  espacoAnuncio: {
     width: '100%',
     maxWidth: 720,
-    backgroundColor: COLORS.cardBg,
-    borderRadius: 14,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    alignItems: 'center',
-  },
-
-  avisosReservadoTitulo: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: COLORS.textDark,
-    marginBottom: 6,
-  },
-
-  avisosReservadoSub: {
-    fontSize: 13,
-    color: COLORS.textMid,
-    textAlign: 'center',
+    height: 140,
   },
 
   // ── Cabeçalho ─────────────────────────────────────────────────────────────

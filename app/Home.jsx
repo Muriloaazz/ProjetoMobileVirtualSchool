@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AvisosReservados from './AvisosReservados';
 import styles from './HomeStyles';
 
 // ─── Dados de exemplo ────────────────────────────────────────────────────────
@@ -74,10 +73,8 @@ export default function Home() {
         {/* Cabeçalho com boas-vindas */}
         <Cabecalho usuario={usuario} />
 
-        {/* Área reservada para avisos (placeholder) */}
-        <View style={styles.centerWrapper}>
-          <AvisosReservados />
-        </View>
+        {/* Espaço em branco reservado para anúncios */}
+        <View style={styles.espacoAnuncio} />
 
         {/* Rodapé com botão de sair */}
         <Rodape onSair={() => setModalSairVisivel(true)} />
