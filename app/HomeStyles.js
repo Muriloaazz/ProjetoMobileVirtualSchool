@@ -14,9 +14,7 @@
  *   Texto secundário : #7A809E
  */
 
-import { Dimensions, StyleSheet } from 'react-native';
-
-const { width } = Dimensions.get('window');
+import { StyleSheet } from 'react-native';
 
 const COLORS = {
   bgPrimary:    '#F4F6FB',
@@ -214,6 +212,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     position: 'relative',
     overflow: 'hidden',
+    marginBottom: 14,
   },
   cardNaoLido: {
     borderColor: '#C7CBFF',
@@ -348,6 +347,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '100%',
   },
   rodapeAppNome: {
     fontSize: 15,

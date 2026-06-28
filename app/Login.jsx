@@ -1,15 +1,16 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-    ActivityIndicator,
-    Alert,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import styles from './LoginStyles';
 
@@ -24,35 +25,143 @@ const Login = ({ navigation }) => {
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!value) {
-      setEmailError('O e-mail é obrigatório.');
-    } else if (!emailRegex.test(value)) {
-      setEmailError('Insira um e-mail válido.');
-    } else {
-      setEmailError('');
+      return { isValid: false, message: 'O e-mail é obrigatório.' };
     }
+    if (!emailRegex.test(value)) {
+      return { isValid: false, message: 'Insira um e-mail válido.' };
+    }
+    return { isValid: true, message: '' };
   };
 
   const validatePassword = (value) => {
     if (!value) {
-      setPasswordError('A senha é obrigatória.');
-    } else if (value.length < 6) {
-      setPasswordError('A senha deve ter no mínimo 6 caracteres.');
-    } else {
-      setPasswordError('');
+      return { isValid: false, message: 'A senha é obrigatória.' };
     }
+    if (value.length < 6) {
+      return { isValid: false, message: 'A senha deve ter no mínimo 6 caracteres.' };
+    }
+    return { isValid: true, message: '' };
   };
 
-  const handleLogin = () => {
-    validateEmail(email);
-    validatePassword(password);
+  const getApiBaseUrls = () => {
+    const candidates = [
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
+      Platform.OS === 'android' ? 'http://10.0.2.2:8080' : null,
+      'http://host.docker.internal:8080',
+      'http://172.17.0.1:8080',
+    ].filter(Boolean);
 
-    if (!email || !password || emailError || passwordError) return;
+    return [...new Set(candidates)];
+  };
+
+  const normalizeValue = (value) => String(value ?? '').trim().toLowerCase();
+
+  const extractUsers = (payload) => {
+    if (Array.isArray(payload)) return payload;
+    if (Array.isArray(payload?.usuarios)) return payload.usuarios;
+    if (Array.isArray(payload?.data)) return payload.data;
+    if (Array.isArray(payload?.items)) return payload.items;
+    if (Array.isArray(payload?.users)) return payload.users;
+    if (payload && typeof payload === 'object') return [payload];
+    return [];
+  };
+
+  const credentialsMatch = (user, email, password) => {
+    const apiEmail = normalizeValue(user?.email ?? user?.mail ?? user?.usuario?.email ?? user?.user?.email);
+    const apiPassword = String(user?.senha ?? user?.password ?? user?.senhaUsuario ?? user?.user?.password ?? '');
+
+    return apiEmail === normalizeValue(email) && apiPassword === password;
+  };
+
+  const authenticateWithApi = async (baseUrl, email, password) => {
+    const attempts = [
+      { url: `${baseUrl}/api/v1/usuarios`, options: { method: 'GET' } },
+      {
+        url: `${baseUrl}/api/v1/usuarios`,
+        options: {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha: password }),
+        },
+      },
+      {
+        url: `${baseUrl}/api/v1/usuarios/login`,
+        options: {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha: password }),
+        },
+      },
+    ];
+
+    for (const attempt of attempts) {
+      try {
+        const response = await fetch(attempt.url, attempt.options);
+        if (!response.ok) continue;
+
+        const data = await response.json();
+        const users = extractUsers(data);
+        const matchedUser = users.find((user) => credentialsMatch(user, email, password));
+
+        if (matchedUser) {
+          return { ok: true, user: matchedUser };
+        }
+
+        if (data && typeof data === 'object' && (data.token || data.accessToken || data.success)) {
+          const user = data.user ?? data.usuario ?? data.data ?? null;
+          if (user && credentialsMatch(user, email, password)) {
+            return { ok: true, user };
+          }
+        }
+      } catch (error) {
+        console.warn(`Falha ao tentar ${attempt.url}:`, error);
+      }
+    }
+
+    return { ok: false };
+  };
+
+  const handleLogin = async () => {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    const emailValidation = validateEmail(trimmedEmail);
+    const passwordValidation = validatePassword(trimmedPassword);
+
+    setEmailError(emailValidation.message);
+    setPasswordError(passwordValidation.message);
+
+    if (!emailValidation.isValid || !passwordValidation.isValid) return;
 
     setLoading(true);
-    setTimeout(() => {
+
+    try {
+      let authenticated = false;
+
+      let authenticatedUser = null;
+
+      for (const baseUrl of getApiBaseUrls()) {
+        const result = await authenticateWithApi(baseUrl, trimmedEmail, trimmedPassword);
+        if (result.ok) {
+          authenticated = true;
+          authenticatedUser = result.user ?? null;
+          break;
+        }
+      }
+
+      if (authenticated) {
+        router.replace({ pathname: '/Home', params: { userName: authenticatedUser?.nome ?? authenticatedUser?.name ?? trimmedEmail } });
+        Alert.alert('Sucesso', 'Login realizado com sucesso!');
+      } else {
+        Alert.alert('Falha no login', 'E-mail ou senha inválidos ou a API não respondeu como esperado.');
+      }
+    } catch (error) {
+      console.error('Erro ao autenticar:', error);
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor. Verifique a API e o endereço configurado.');
+    } finally {
       setLoading(false);
-      Alert.alert('Sucesso', 'Login realizado com sucesso!');
-    }, 1500);
+    }
   };
 
   const handleForgotPassword = () => {
@@ -99,9 +208,15 @@ const Login = ({ navigation }) => {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  if (emailError) validateEmail(text);
+                  if (emailError) {
+                    const validation = validateEmail(text);
+                    setEmailError(validation.message);
+                  }
                 }}
-                onBlur={() => validateEmail(email)}
+                onBlur={() => {
+                  const validation = validateEmail(email);
+                  setEmailError(validation.message);
+                }}
               />
             </View>
             {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
@@ -121,9 +236,15 @@ const Login = ({ navigation }) => {
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
-                  if (passwordError) validatePassword(text);
+                  if (passwordError) {
+                    const validation = validatePassword(text);
+                    setPasswordError(validation.message);
+                  }
                 }}
-                onBlur={() => validatePassword(password)}
+                onBlur={() => {
+                  const validation = validatePassword(password);
+                  setPasswordError(validation.message);
+                }}
               />
               <TouchableOpacity
                 style={styles.eyeButton}
