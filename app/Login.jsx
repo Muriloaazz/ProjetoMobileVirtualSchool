@@ -21,6 +21,8 @@ const Login = ({ navigation }) => {
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [feedbackType, setFeedbackType] = useState('');
 
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -131,6 +133,8 @@ const Login = ({ navigation }) => {
 
     setEmailError(emailValidation.message);
     setPasswordError(passwordValidation.message);
+    setFeedbackMessage('');
+    setFeedbackType('');
 
     if (!emailValidation.isValid || !passwordValidation.isValid) return;
 
@@ -151,10 +155,12 @@ const Login = ({ navigation }) => {
       }
 
       if (authenticated) {
+        setFeedbackType('success');
+        setFeedbackMessage('Login com sucesso!');
         router.replace({ pathname: '/Home', params: { userName: authenticatedUser?.nome ?? authenticatedUser?.name ?? trimmedEmail } });
-        Alert.alert('Sucesso', 'Login realizado com sucesso!');
       } else {
-        Alert.alert('Falha no login', 'E-mail ou senha inválidos ou a API não respondeu como esperado.');
+        setFeedbackType('error');
+        setFeedbackMessage('Login recusado. ');
       }
     } catch (error) {
       console.error('Erro ao autenticar:', error);
@@ -208,6 +214,10 @@ const Login = ({ navigation }) => {
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
+                  if (feedbackMessage) {
+                    setFeedbackMessage('');
+                    setFeedbackType('');
+                  }
                   if (emailError) {
                     const validation = validateEmail(text);
                     setEmailError(validation.message);
@@ -236,6 +246,10 @@ const Login = ({ navigation }) => {
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
+                  if (feedbackMessage) {
+                    setFeedbackMessage('');
+                    setFeedbackType('');
+                  }
                   if (passwordError) {
                     const validation = validatePassword(text);
                     setPasswordError(validation.message);
@@ -267,6 +281,12 @@ const Login = ({ navigation }) => {
           >
             <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
           </TouchableOpacity>
+
+          {feedbackMessage ? (
+            <View style={[styles.feedbackBox, feedbackType === 'success' ? styles.feedbackSuccess : styles.feedbackError]}>
+              <Text style={styles.feedbackText}>{feedbackMessage}</Text>
+            </View>
+          ) : null}
 
           {/* Botão de Login */}
           <TouchableOpacity

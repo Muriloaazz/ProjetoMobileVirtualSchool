@@ -156,6 +156,27 @@ const styles = StyleSheet.create({
     marginTop: SPACING.xs,
     marginLeft: SPACING.xs,
   },
+  feedbackBox: {
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  feedbackSuccess: {
+    backgroundColor: '#ECFDF3',
+    borderWidth: 1,
+    borderColor: '#34D399',
+  },
+  feedbackError: {
+    backgroundColor: COLORS.errorBg,
+    borderWidth: 1,
+    borderColor: COLORS.error,
+  },
+  feedbackText: {
+    ...FONT.small,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 
   /* ──────────────────────── Recuperação de Senha ──────────────── */
   forgotPasswordButton: {
