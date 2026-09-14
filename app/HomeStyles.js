@@ -294,24 +294,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.3,
   },
-  cardData: {
-    fontSize: 11,
-    color: COLORS.textSecondary,
-    fontWeight: '500',
-  },
-  cardTitulo: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    marginBottom: 6,
-    lineHeight: 22,
-  },
-  cardDescricao: {
-    fontSize: 13,
-    color: COLORS.textSecondary,
-    lineHeight: 20,
-    marginBottom: 12,
-  },
   cardBotaoLerMais: {
     alignSelf: 'flex-start',
   },
@@ -453,10 +435,6 @@ const styles = StyleSheet.create({
   modalSairNome: {
     fontWeight: '700',
     color: COLORS.textPrimary,
-  },
-  modalSairNome: {
-    fontWeight: '700',
-    color: COLORS.textDark,
   },
   modalSairBotoes: {
     flexDirection: 'row',

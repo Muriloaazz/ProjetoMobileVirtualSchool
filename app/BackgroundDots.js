@@ -1,7 +1,5 @@
 import { StyleSheet, View } from 'react-native';
 
-const STAR_COLOR = '#2da6d6'; // blue accent
-
 const DOTS = [
   { top: '4%', left: '6%', size: 2, opacity: 0.95 },
   { top: '8%', left: '26%', size: 3, opacity: 0.7 },

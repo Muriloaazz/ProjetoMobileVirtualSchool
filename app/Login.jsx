@@ -1,63 +1,57 @@
-import { router } from 'expo-router';
-import { useState } from 'react';
+import { router } from "expo-router";
+import { useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
-} from 'react-native';
-import BackgroundDots from './BackgroundDots';
-import styles from './LoginStyles';
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import BackgroundDots from "./BackgroundDots";
+import styles from "./LoginStyles";
 
 const Login = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState('');
-  const [passwordError, setPasswordError] = useState('');
-  const [feedbackMessage, setFeedbackMessage] = useState('');
-  const [feedbackType, setFeedbackType] = useState('');
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
 
   const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!value) {
-      return { isValid: false, message: 'O e-mail é obrigatório.' };
+      return { isValid: false, message: "O e-mail é obrigatório." };
     }
     if (!emailRegex.test(value)) {
-      return { isValid: false, message: 'Insira um e-mail válido.' };
+      return { isValid: false, message: "Insira um e-mail válido." };
     }
-    return { isValid: true, message: '' };
+    return { isValid: true, message: "" };
   };
 
   const validatePassword = (value) => {
     if (!value) {
-      return { isValid: false, message: 'A senha é obrigatória.' };
+      return { isValid: false, message: "A senha é obrigatória." };
     }
     if (value.length < 6) {
-      return { isValid: false, message: 'A senha deve ter no mínimo 6 caracteres.' };
+      return {
+        isValid: false,
+        message: "A senha deve ter no mínimo 6 caracteres.",
+      };
     }
-    return { isValid: true, message: '' };
+    return { isValid: true, message: "" };
   };
 
-  const getApiBaseUrls = () => {
-    const candidates = [
-      'http://localhost:8080',
-      'http://127.0.0.1:8080',
-      Platform.OS === 'android' ? 'http://10.0.2.2:8080' : null,
-      'http://host.docker.internal:8080',
-      'http://172.17.0.1:8080',
-    ].filter(Boolean);
-
-    return [...new Set(candidates)];
-  };
-
-  const normalizeValue = (value) => String(value ?? '').trim().toLowerCase();
+  const normalizeValue = (value) =>
+    String(value ?? "")
+      .trim()
+      .toLowerCase();
 
   const extractUsers = (payload) => {
     if (Array.isArray(payload)) return payload;
@@ -65,33 +59,44 @@ const Login = ({ navigation }) => {
     if (Array.isArray(payload?.data)) return payload.data;
     if (Array.isArray(payload?.items)) return payload.items;
     if (Array.isArray(payload?.users)) return payload.users;
-    if (payload && typeof payload === 'object') return [payload];
+    if (payload && typeof payload === "object") return [payload];
     return [];
   };
 
   const credentialsMatch = (user, email, password) => {
-    const apiEmail = normalizeValue(user?.email ?? user?.mail ?? user?.usuario?.email ?? user?.user?.email);
-    const apiPassword = String(user?.senha ?? user?.password ?? user?.senhaUsuario ?? user?.user?.password ?? '');
+    const apiEmail = normalizeValue(
+      user?.email ?? user?.mail ?? user?.usuario?.email ?? user?.user?.email,
+    );
+    const apiPassword = String(
+      user?.senha ??
+        user?.password ??
+        user?.senhaUsuario ??
+        user?.user?.password ??
+        "",
+    );
 
     return apiEmail === normalizeValue(email) && apiPassword === password;
   };
 
-  const authenticateWithApi = async (baseUrl, email, password) => {
+  const authenticateWithApi = async (email, password) => {
     const attempts = [
-      { url: `${baseUrl}/api/v1/usuarios`, options: { method: 'GET' } },
       {
-        url: `${baseUrl}/api/v1/usuarios`,
+        url: `http://localhost:8080/api/v1/usuarios`,
+        options: { method: "GET" },
+      },
+      {
+        url: `http://localhost:8080/api/v1/usuarios`,
         options: {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, senha: password }),
         },
       },
       {
-        url: `${baseUrl}/api/v1/usuarios/login`,
+        url: `http://localhost:8080/api/v1/usuarios/login`,
         options: {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, senha: password }),
         },
       },
@@ -104,13 +109,19 @@ const Login = ({ navigation }) => {
 
         const data = await response.json();
         const users = extractUsers(data);
-        const matchedUser = users.find((user) => credentialsMatch(user, email, password));
+        const matchedUser = users.find((user) =>
+          credentialsMatch(user, email, password),
+        );
 
         if (matchedUser) {
           return { ok: true, user: matchedUser };
         }
 
-        if (data && typeof data === 'object' && (data.token || data.accessToken || data.success)) {
+        if (
+          data &&
+          typeof data === "object" &&
+          (data.token || data.accessToken || data.success)
+        ) {
           const user = data.user ?? data.usuario ?? data.data ?? null;
           if (user && credentialsMatch(user, email, password)) {
             return { ok: true, user };
@@ -133,38 +144,40 @@ const Login = ({ navigation }) => {
 
     setEmailError(emailValidation.message);
     setPasswordError(passwordValidation.message);
-    setFeedbackMessage('');
-    setFeedbackType('');
+    setFeedbackMessage("");
+    setFeedbackType("");
 
     if (!emailValidation.isValid || !passwordValidation.isValid) return;
 
     setLoading(true);
 
     try {
-      let authenticated = false;
-
-      let authenticatedUser = null;
-
-      for (const baseUrl of getApiBaseUrls()) {
-        const result = await authenticateWithApi(baseUrl, trimmedEmail, trimmedPassword);
-        if (result.ok) {
-          authenticated = true;
-          authenticatedUser = result.user ?? null;
-          break;
-        }
-      }
+      const result = await authenticateWithApi(trimmedEmail, trimmedPassword);
+      const authenticated = result.ok;
+      const authenticatedUser = result.user ?? null;
 
       if (authenticated) {
-        setFeedbackType('success');
-        setFeedbackMessage('Login com sucesso!');
-        router.replace({ pathname: '/Home', params: { userName: authenticatedUser?.nome ?? authenticatedUser?.name ?? trimmedEmail } });
+        setFeedbackType("success");
+        setFeedbackMessage("Login com sucesso!");
+        router.replace({
+          pathname: "/Home",
+          params: {
+            userName:
+              authenticatedUser?.nome ??
+              authenticatedUser?.name ??
+              trimmedEmail,
+          },
+        });
       } else {
-        setFeedbackType('error');
-        setFeedbackMessage('Login recusado. ');
+        setFeedbackType("error");
+        setFeedbackMessage("Login recusado. ");
       }
     } catch (error) {
-      console.error('Erro ao autenticar:', error);
-      Alert.alert('Erro', 'Não foi possível conectar ao servidor. Verifique a API e o endereço configurado.');
+      console.error("Erro ao autenticar:", error);
+      Alert.alert(
+        "Erro",
+        "Não foi possível conectar ao servidor. Verifique a API e o endereço configurado.",
+      );
     } finally {
       setLoading(false);
     }
@@ -172,16 +185,19 @@ const Login = ({ navigation }) => {
 
   const handleForgotPassword = () => {
     if (navigation) {
-      navigation.navigate('ForgotPassword');
+      navigation.navigate("ForgotPassword");
     } else {
-      Alert.alert('Recuperar Senha', 'Você será redirecionado para a tela de recuperação de senha.');
+      Alert.alert(
+        "Recuperar Senha",
+        "Você será redirecionado para a tela de recuperação de senha.",
+      );
     }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <BackgroundDots />
       <ScrollView
@@ -199,7 +215,12 @@ const Login = ({ navigation }) => {
           {/* Campo de E-mail */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>E-mail</Text>
-            <View style={[styles.inputWrapper, emailError ? styles.inputWrapperError : null]}>
+            <View
+              style={[
+                styles.inputWrapper,
+                emailError ? styles.inputWrapperError : null,
+              ]}
+            >
               <TextInput
                 style={styles.input}
                 placeholder="seuemail@gmail.com"
@@ -211,8 +232,8 @@ const Login = ({ navigation }) => {
                 onChangeText={(text) => {
                   setEmail(text);
                   if (feedbackMessage) {
-                    setFeedbackMessage('');
-                    setFeedbackType('');
+                    setFeedbackMessage("");
+                    setFeedbackType("");
                   }
                   if (emailError) {
                     const validation = validateEmail(text);
@@ -225,13 +246,20 @@ const Login = ({ navigation }) => {
                 }}
               />
             </View>
-            {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+            {emailError ? (
+              <Text style={styles.errorText}>{emailError}</Text>
+            ) : null}
           </View>
 
           {/* Campo de Senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Senha</Text>
-            <View style={[styles.inputWrapper, passwordError ? styles.inputWrapperError : null]}>
+            <View
+              style={[
+                styles.inputWrapper,
+                passwordError ? styles.inputWrapperError : null,
+              ]}
+            >
               <TextInput
                 style={[styles.input, styles.inputPassword]}
                 placeholder="Digite sua senha"
@@ -243,8 +271,8 @@ const Login = ({ navigation }) => {
                 onChangeText={(text) => {
                   setPassword(text);
                   if (feedbackMessage) {
-                    setFeedbackMessage('');
-                    setFeedbackType('');
+                    setFeedbackMessage("");
+                    setFeedbackType("");
                   }
                   if (passwordError) {
                     const validation = validatePassword(text);
@@ -259,14 +287,18 @@ const Login = ({ navigation }) => {
               <TouchableOpacity
                 style={styles.eyeButton}
                 onPress={() => setShowPassword(!showPassword)}
-                accessibilityLabel={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                accessibilityLabel={
+                  showPassword ? "Ocultar senha" : "Mostrar senha"
+                }
               >
                 <Text style={styles.eyeButtonText}>
-                  {showPassword ? 'Ocultar' : 'Mostrar'}
+                  {showPassword ? "Ocultar" : "Mostrar"}
                 </Text>
               </TouchableOpacity>
             </View>
-            {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+            {passwordError ? (
+              <Text style={styles.errorText}>{passwordError}</Text>
+            ) : null}
           </View>
 
           {/* Recuperação de senha */}
@@ -279,7 +311,14 @@ const Login = ({ navigation }) => {
           </TouchableOpacity>
 
           {feedbackMessage ? (
-            <View style={[styles.feedbackBox, feedbackType === 'success' ? styles.feedbackSuccess : styles.feedbackError]}>
+            <View
+              style={[
+                styles.feedbackBox,
+                feedbackType === "success"
+                  ? styles.feedbackSuccess
+                  : styles.feedbackError,
+              ]}
+            >
               <Text style={styles.feedbackText}>{feedbackMessage}</Text>
             </View>
           ) : null}
@@ -298,7 +337,6 @@ const Login = ({ navigation }) => {
             )}
           </TouchableOpacity>
         </View>
-
       </ScrollView>
     </KeyboardAvoidingView>
   );

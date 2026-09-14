@@ -11,10 +11,9 @@ const COLORS = {
   placeholder:   '#7F8B93',
   border:        'rgba(45,166,214,0.18)',
   borderFocus:   '#2da6d6',
-  divider:       'rgba(45,166,214,0.12)',
+  divider:       '#FFFFFF',
   error:         '#ff6b6b',
   errorBg:       '#3b1b1b',
-  divider:       '#FFFFFF',
   white:         '#FFFFFF',
   disabled:      '#284651',
 };
