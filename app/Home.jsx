@@ -12,8 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import getApiBaseUrls, { fetchFromApi } from "./api";
 import BackgroundDots from "./BackgroundDots";
+import { fetchFromApi } from "./api";
 import styles from "./HomeStyles";
 
 // ─── Componente: Cabeçalho / Boas-vindas ─────────────────────────────────────
@@ -53,42 +53,91 @@ export default function Home() {
   const [modalSairVisivel, setModalSairVisivel] = useState(false);
   const [publicacoes, setPublicacoes] = useState([]);
   const [carregandoPublicacoes, setCarregandoPublicacoes] = useState(true);
-  const [failedImages, setFailedImages] = useState({});
-  const API_BASE = getApiBaseUrls()[0];
+  const [erroPublicacoes, setErroPublicacoes] = useState("");
   const usuario = {
     nome: params?.userName ? String(params.userName) : "Usuário",
     avatar: null,
   };
 
   useEffect(() => {
+    let ativo = true;
+
     const buscarPublicacoes = async () => {
       try {
         setCarregandoPublicacoes(true);
+        setErroPublicacoes("");
 
         const response = await fetchFromApi("/api/v1/publicacoes");
-        if (!response.ok) {
-          throw new Error("Erro ao buscar publicações");
-        }
         const data = await response.json();
-        const lista = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.publicacoes)
-            ? data.publicacoes
-            : Array.isArray(data?.data)
-              ? data.data
-              : [];
+        const lista = Array.isArray(data) ? data : data?.publicacoes;
 
-        setPublicacoes(lista);
+        if (!Array.isArray(lista)) {
+          throw new Error("A resposta da API não contém uma lista de publicações.");
+        }
+
+        if (ativo) setPublicacoes(lista);
       } catch (error) {
         console.error("Erro ao carregar publicações:", error);
-        setPublicacoes([]);
+        if (ativo) {
+          setPublicacoes([]);
+          setErroPublicacoes(
+            "Não foi possível carregar as publicações. Verifique a conexão com o servidor e tente novamente.",
+          );
+        }
       } finally {
-        setCarregandoPublicacoes(false);
+        if (ativo) setCarregandoPublicacoes(false);
       }
     };
 
     buscarPublicacoes();
-  }, [params?.email]);
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  const obterImagem = (imagem) => {
+    if (!imagem) return null;
+
+    if (typeof imagem === "string") {
+      if (/^(https?:\/\/|data:image\/)/i.test(imagem)) return imagem;
+
+      const tipo = imagem.startsWith("/9j/")
+        ? "image/jpeg"
+        : imagem.startsWith("iVBOR")
+          ? "image/png"
+          : imagem.startsWith("R0lGOD")
+            ? "image/gif"
+            : "image/jpeg";
+      return `data:${tipo};base64,${imagem}`;
+    }
+
+    if (Array.isArray(imagem)) {
+      const bytes = Uint8Array.from(imagem);
+      let binario = "";
+      bytes.forEach((byte) => {
+        binario += String.fromCharCode(byte);
+      });
+      return `data:image/jpeg;base64,${btoa(binario)}`;
+    }
+
+    return null;
+  };
+
+  const formatarData = (valor) => {
+    if (!valor) return "";
+
+    // Datas sem horário representam um dia do calendário, não um instante UTC.
+    const dataCivil = String(valor).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (dataCivil) {
+      return `${dataCivil[3]}/${dataCivil[2]}/${dataCivil[1]}`;
+    }
+
+    const data = new Date(valor);
+    return Number.isNaN(data.getTime())
+      ? String(valor)
+      : data.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  };
 
   const confirmarSaida = () => {
     setModalSairVisivel(false);
@@ -120,6 +169,10 @@ export default function Home() {
               <ActivityIndicator size="small" color="#2da6d6" />
               <Text style={styles.loadingText}>Carregando anúncios...</Text>
             </View>
+          ) : erroPublicacoes ? (
+            <View style={styles.card}>
+              <Text style={styles.cardDescricao}>{erroPublicacoes}</Text>
+            </View>
           ) : publicacoes.length === 0 ? (
             <View style={styles.card}>
               <Text style={styles.cardTitulo}>Nenhum anúncio disponível</Text>
@@ -128,81 +181,17 @@ export default function Home() {
               </Text>
             </View>
           ) : (
-            publicacoes.map((item, index) => {
-              const titulo =
-                item?.titulo ?? item?.title ?? item?.nome ?? "Anúncio";
-              const descricao =
-                item?.descricao ??
-                item?.description ??
-                item?.conteudo ??
-                item?.texto ??
-                "";
-              const data =
-                item?.data ??
-                item?.createdAt ??
-                item?.dataPublicacao ??
-                item?.created_at ??
-                "";
-
-              const key = item?.id ?? `${titulo}-${index}`;
-
-              const resolveImage = (it) => {
-                if (!it) return null;
-
-                const candidates = [
-                  it?.imagem,
-                  it?.imagemUrl,
-                  it?.image,
-                  it?.foto,
-                  it?.thumbnail,
-                  it?.thumb,
-                  it?.url,
-                  it?.urlImagem,
-                  it?.picture,
-                  it?.arquivo,
-                  it?.fileName,
-                  it?.file,
-                  it?.anexo?.url,
-                  it?.anexo?.fileName,
-                  Array.isArray(it?.arquivos) && it?.arquivos?.[0]?.url,
-                  Array.isArray(it?.files) && it?.files?.[0]?.path,
-                ]
-                  .flat()
-                  .filter(Boolean);
-
-                let val = candidates.length ? candidates[0] : null;
-                if (!val) return null;
-
-                // If it's an object with url/path
-                if (typeof val === "object") {
-                  val = val.url || val.path || val.fileName || val.file || null;
-                }
-
-                if (!val) return null;
-
-                const s = String(val);
-                // base64/data URI
-                if (s.startsWith("data:")) return s;
-                // absolute URL
-                if (s.startsWith("http://") || s.startsWith("https://"))
-                  return s;
-                // relative path -> prefix with API base
-                if (s.startsWith("/")) return `${API_BASE}${s}`;
-                return `${API_BASE}/${s}`;
-              };
-
-              const imageUrl = resolveImage(item);
+            publicacoes.map((item) => {
+              const titulo = item.titulo || "Publicação";
+              const imagem = obterImagem(item.imagem_url);
 
               return (
-                <View key={key} style={styles.card}>
-                  {imageUrl && !failedImages[key] ? (
+                <View key={item.id} style={styles.card}>
+                  {imagem ? (
                     <Image
-                      source={{ uri: String(imageUrl) }}
+                      source={{ uri: imagem }}
                       style={styles.cardImage}
                       resizeMode="cover"
-                      onError={() =>
-                        setFailedImages((p) => ({ ...p, [key]: true }))
-                      }
                     />
                   ) : (
                     <View style={styles.cardImagePlaceholder} />
@@ -210,18 +199,22 @@ export default function Home() {
 
                   <View style={styles.cardBody}>
                     <Text style={styles.cardTitulo}>{titulo}</Text>
+                    {item.subtitulo ? (
+                      <Text style={styles.cardSubtitulo}>{item.subtitulo}</Text>
+                    ) : null}
                     <Text
                       style={styles.cardDescricao}
-                      numberOfLines={3}
-                      ellipsizeMode="tail"
                     >
-                      {descricao || "Sem descrição disponível."}
+                      {item.descricao}
                     </Text>
 
                     <View style={styles.cardMetaRow}>
-                      {data ? (
-                        <Text style={styles.cardData}>{String(data)}</Text>
-                      ) : null}
+                      <Text style={styles.cardData}>
+                        {formatarData(item.data_publicacao)}
+                      </Text>
+                      <Text style={styles.cardData}>
+                        {item.tipo_publicacao} · {item.status_publicacao}
+                      </Text>
                     </View>
                   </View>
                 </View>

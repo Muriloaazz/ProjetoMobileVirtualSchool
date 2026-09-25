@@ -1,8 +1,6 @@
-import { router } from "expo-router";
+import axios from "axios";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -13,186 +11,53 @@ import {
 } from "react-native";
 import BackgroundDots from "./BackgroundDots";
 import styles from "./LoginStyles";
+import { useRouter } from 'expo-router';
 
-const Login = ({ navigation }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [feedbackMessage, setFeedbackMessage] = useState("");
-  const [feedbackType, setFeedbackType] = useState("");
+  const router = useRouter();
 
-  const validateEmail = (value) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!value) {
-      return { isValid: false, message: "O e-mail é obrigatório." };
-    }
-    if (!emailRegex.test(value)) {
-      return { isValid: false, message: "Insira um e-mail válido." };
-    }
-    return { isValid: true, message: "" };
-  };
 
-  const validatePassword = (value) => {
-    if (!value) {
-      return { isValid: false, message: "A senha é obrigatória." };
-    }
-    if (value.length < 6) {
-      return {
-        isValid: false,
-        message: "A senha deve ter no mínimo 6 caracteres.",
-      };
-    }
-    return { isValid: true, message: "" };
-  };
 
-  const normalizeValue = (value) =>
-    String(value ?? "")
-      .trim()
-      .toLowerCase();
 
-  const extractUsers = (payload) => {
-    if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload?.usuarios)) return payload.usuarios;
-    if (Array.isArray(payload?.data)) return payload.data;
-    if (Array.isArray(payload?.items)) return payload.items;
-    if (Array.isArray(payload?.users)) return payload.users;
-    if (payload && typeof payload === "object") return [payload];
-    return [];
-  };
 
-  const credentialsMatch = (user, email, password) => {
-    const apiEmail = normalizeValue(
-      user?.email ?? user?.mail ?? user?.usuario?.email ?? user?.user?.email,
-    );
-    const apiPassword = String(
-      user?.senha ??
-        user?.password ??
-        user?.senhaUsuario ??
-        user?.user?.password ??
-        "",
-    );
 
-    return apiEmail === normalizeValue(email) && apiPassword === password;
-  };
 
-  const authenticateWithApi = async (email, password) => {
-    const attempts = [
-      {
-        url: `http://localhost:8080/api/v1/usuarios`,
-        options: { method: "GET" },
-      },
-      {
-        url: `http://localhost:8080/api/v1/usuarios`,
-        options: {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, senha: password }),
-        },
-      },
-      {
-        url: `http://localhost:8080/api/v1/usuarios/login`,
-        options: {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, senha: password }),
-        },
-      },
-    ];
+  async function handleLogin(email, password) {
 
-    for (const attempt of attempts) {
-      try {
-        const response = await fetch(attempt.url, attempt.options);
-        if (!response.ok) continue;
+    
+    const credenciais = {
+      email: email,
+      password: password,
+    };
 
-        const data = await response.json();
-        const users = extractUsers(data);
-        const matchedUser = users.find((user) =>
-          credentialsMatch(user, email, password),
-        );
 
-        if (matchedUser) {
-          return { ok: true, user: matchedUser };
-        }
-
-        if (
-          data &&
-          typeof data === "object" &&
-          (data.token || data.accessToken || data.success)
-        ) {
-          const user = data.user ?? data.usuario ?? data.data ?? null;
-          if (user && credentialsMatch(user, email, password)) {
-            return { ok: true, user };
-          }
-        }
-      } catch (error) {
-        console.warn(`Falha ao tentar ${attempt.url}:`, error);
-      }
-    }
-
-    return { ok: false };
-  };
-
-  const handleLogin = async () => {
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
-    const emailValidation = validateEmail(trimmedEmail);
-    const passwordValidation = validatePassword(trimmedPassword);
-
-    setEmailError(emailValidation.message);
-    setPasswordError(passwordValidation.message);
-    setFeedbackMessage("");
-    setFeedbackType("");
-
-    if (!emailValidation.isValid || !passwordValidation.isValid) return;
-
-    setLoading(true);
 
     try {
-      const result = await authenticateWithApi(trimmedEmail, trimmedPassword);
-      const authenticated = result.ok;
-      const authenticatedUser = result.user ?? null;
+      const response = await axios.post(
+        `http://localhost:8080/api/v1/usuarios/login`,
+        credenciais,
+      );
 
-      if (authenticated) {
-        setFeedbackType("success");
-        setFeedbackMessage("Login com sucesso!");
-        router.replace({
-          pathname: "/Home",
-          params: {
-            userName:
-              authenticatedUser?.nome ??
-              authenticatedUser?.name ??
-              trimmedEmail,
-          },
-        });
+      if (response.data) {
+        return router.replace("/Home")
       } else {
-        setFeedbackType("error");
-        setFeedbackMessage("Login recusado. ");
+        return alert("NAO EXISTE ESTE USUARIO...");
       }
-    } catch (error) {
-      console.error("Erro ao autenticar:", error);
-      Alert.alert(
-        "Erro",
-        "Não foi possível conectar ao servidor. Verifique a API e o endereço configurado.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleForgotPassword = () => {
-    if (navigation) {
-      navigation.navigate("ForgotPassword");
-    } else {
-      Alert.alert(
-        "Recuperar Senha",
-        "Você será redirecionado para a tela de recuperação de senha.",
-      );
+
+    } catch (error) {
+      return console.log("Mensagem de erro: " + error);
     }
-  };
+
+
+
+  }
+
+
+
 
   return (
     <KeyboardAvoidingView
@@ -212,15 +77,9 @@ const Login = ({ navigation }) => {
         </View>
 
         <View style={styles.formSection}>
-          {/* Campo de E-mail */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>E-mail</Text>
-            <View
-              style={[
-                styles.inputWrapper,
-                emailError ? styles.inputWrapperError : null,
-              ]}
-            >
+            <View style={styles.inputWrapper}>
               <TextInput
                 style={styles.input}
                 placeholder="seuemail@gmail.com"
@@ -229,37 +88,14 @@ const Login = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  if (feedbackMessage) {
-                    setFeedbackMessage("");
-                    setFeedbackType("");
-                  }
-                  if (emailError) {
-                    const validation = validateEmail(text);
-                    setEmailError(validation.message);
-                  }
-                }}
-                onBlur={() => {
-                  const validation = validateEmail(email);
-                  setEmailError(validation.message);
-                }}
+                onChangeText={setEmail}
               />
             </View>
-            {emailError ? (
-              <Text style={styles.errorText}>{emailError}</Text>
-            ) : null}
           </View>
 
-          {/* Campo de Senha */}
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Senha</Text>
-            <View
-              style={[
-                styles.inputWrapper,
-                passwordError ? styles.inputWrapperError : null,
-              ]}
-            >
+            <View style={styles.inputWrapper}>
               <TextInput
                 style={[styles.input, styles.inputPassword]}
                 placeholder="Digite sua senha"
@@ -268,21 +104,7 @@ const Login = ({ navigation }) => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  if (feedbackMessage) {
-                    setFeedbackMessage("");
-                    setFeedbackType("");
-                  }
-                  if (passwordError) {
-                    const validation = validatePassword(text);
-                    setPasswordError(validation.message);
-                  }
-                }}
-                onBlur={() => {
-                  const validation = validatePassword(password);
-                  setPasswordError(validation.message);
-                }}
+                onChangeText={setPassword}
               />
               <TouchableOpacity
                 style={styles.eyeButton}
@@ -296,45 +118,14 @@ const Login = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            {passwordError ? (
-              <Text style={styles.errorText}>{passwordError}</Text>
-            ) : null}
           </View>
 
-          {/* Recuperação de senha */}
           <TouchableOpacity
-            style={styles.forgotPasswordButton}
-            onPress={handleForgotPassword}
-            accessibilityLabel="Esqueci minha senha"
+            style={styles.loginButton}
+            onPress={(e) => handleLogin(email, password)}
+            accessibilityLabel="Logar"
           >
-            <Text style={styles.forgotPasswordText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
-
-          {feedbackMessage ? (
-            <View
-              style={[
-                styles.feedbackBox,
-                feedbackType === "success"
-                  ? styles.feedbackSuccess
-                  : styles.feedbackError,
-              ]}
-            >
-              <Text style={styles.feedbackText}>{feedbackMessage}</Text>
-            </View>
-          ) : null}
-
-          {/* Botão de Login */}
-          <TouchableOpacity
-            style={[styles.loginButton, loading && styles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={loading}
-            accessibilityLabel="Entrar"
-          >
-            {loading ? (
-              <ActivityIndicator color="#FFFFFF" size="small" />
-            ) : (
-              <Text style={styles.loginButtonText}>Entrar</Text>
-            )}
+            <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

@@ -58,12 +58,15 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.xxl,
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.xl,
   },
 
   /* ──────────────────────────── Header ──────────────────────────── */
   headerSection: {
+    width: '100%',
+    maxWidth: 480,
     alignItems: 'center',
     marginBottom: SPACING.xl,
     paddingTop: SPACING.lg,
@@ -75,8 +78,9 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.sm,
   },
   logoPlaceholder: {
-    width: 500,
-    height: 230,
+    width: '100%',
+    maxWidth: 500,
+    aspectRatio: 500 / 230,
     marginBottom: -SPACING.xs,
     // Shadow
     ...Platform.select({
@@ -103,6 +107,8 @@ const styles = StyleSheet.create({
 
   /* ──────────────────────────── Form ──────────────────────────── */
   formSection: {
+    width: '100%',
+    maxWidth: 480,
     backgroundColor: COLORS.surface,
     borderRadius: RADIUS.lg,
     padding: SPACING.lg,
@@ -187,19 +193,6 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
   },
 
-  /* ──────────────────────── Recuperação de Senha ──────────────── */
-  forgotPasswordButton: {
-    alignSelf: 'flex-end',
-    marginTop: -SPACING.xs,
-    marginBottom: SPACING.lg,
-    paddingVertical: SPACING.xs,
-  },
-  forgotPasswordText: {
-    ...FONT.link,
-    color: COLORS.accent,
-  },
-
-  /* ──────────────────────────── Botão ──────────────────────────── */
   loginButton: {
     backgroundColor: COLORS.accent,
     borderRadius: RADIUS.md,
@@ -262,3 +255,4 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
+

@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
   scrollConteudo: {
     paddingBottom: 32,
     flexGrow: 1,
+    alignItems: 'center',
   },
 
   espacoAnuncio: {
@@ -59,6 +60,8 @@ const styles = StyleSheet.create({
   // ── Cabeçalho ─────────────────────────────────────────────────────────────
 
   cabecalho: {
+    width: '100%',
+    maxWidth: 960,
     backgroundColor: COLORS.surface,
     paddingTop: 24,
     paddingBottom: 40,
@@ -161,6 +164,8 @@ const styles = StyleSheet.create({
   // ── Seção de Anúncios ─────────────────────────────────────────────────────
 
   secao: {
+    width: '100%',
+    maxWidth: 960,
     paddingHorizontal: 20,
     marginTop: 28,
   },
@@ -180,6 +185,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.textSecondary,
     marginBottom: 16,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 24,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: COLORS.textSecondary,
   },
 
   /* Badge de contagem de não lidos */
@@ -231,6 +247,12 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     marginBottom: 6,
     lineHeight: 20,
+  },
+  cardSubtitulo: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.textSecondary,
+    marginBottom: 8,
   },
   cardDescricao: {
     fontSize: 12,
@@ -309,7 +331,9 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(13,27,42,0.6)',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
   },
   modalContainer: {
     backgroundColor: COLORS.surface,
@@ -411,11 +435,12 @@ const styles = StyleSheet.create({
   // ── Modal de Saída ────────────────────────────────────────────────────────
 
   modalSairContainer: {
+    width: '100%',
+    maxWidth: 480,
     backgroundColor: COLORS.surface,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    padding: 32,
-    paddingBottom: 40,
+    borderRadius: 28,
+    padding: 24,
+    paddingBottom: 28,
     alignItems: 'center',
   },
   modalSairTitulo: {
