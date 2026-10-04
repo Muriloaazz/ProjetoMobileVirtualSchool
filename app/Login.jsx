@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -11,29 +12,21 @@ import {
 } from "react-native";
 import BackgroundDots from "./BackgroundDots";
 import styles from "./LoginStyles";
-import { useRouter } from 'expo-router';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState("");
   const router = useRouter();
 
-
-
-
-
-
-
   async function handleLogin(email, password) {
+    setLoginError("");
 
-    
     const credenciais = {
       email: email,
       password: password,
     };
-
-
 
     try {
       const response = await axios.post(
@@ -42,22 +35,20 @@ const Login = () => {
       );
 
       if (response.data) {
-        return router.replace("/Home")
+        return router.replace("/Home");
       } else {
-        return alert("NAO EXISTE ESTE USUARIO...");
+        setLoginError(
+          "Não encontramos uma conta com esses dados. Confira seu e-mail e sua senha e tente novamente.",
+        );
+        return;
       }
-
-
     } catch (error) {
+      setLoginError(
+        "Não foi possível entrar agora. Confira seus dados e tente novamente.",
+      );
       return console.log("Mensagem de erro: " + error);
     }
-
-
-
   }
-
-
-
 
   return (
     <KeyboardAvoidingView
@@ -127,6 +118,13 @@ const Login = () => {
           >
             <Text style={styles.loginButtonText}>Entrar</Text>
           </TouchableOpacity>
+
+          {loginError ? (
+            <View style={styles.loginErrorCard} accessibilityRole="alert">
+              <Text style={styles.loginErrorTitle}>Usuário não encontrado</Text>
+              <Text style={styles.loginErrorText}>{loginError}</Text>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -192,6 +192,25 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: COLORS.textPrimary,
   },
+  loginErrorCard: {
+    backgroundColor: COLORS.errorBg,
+    borderWidth: 1,
+    borderColor: COLORS.error,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
+    marginTop: SPACING.md,
+  },
+  loginErrorTitle: {
+    ...FONT.label,
+    color: COLORS.error,
+    marginBottom: SPACING.xs,
+  },
+  loginErrorText: {
+    ...FONT.small,
+    color: COLORS.textPrimary,
+    lineHeight: 18,
+  },
 
   loginButton: {
     backgroundColor: COLORS.accent,
